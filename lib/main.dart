@@ -1,9 +1,9 @@
 // ////////////////////////////////////////////////////////////////// Imports //
 import 'package:flutter/material.dart';
-import 'package:inconcinnity/tabs/first.dart';
-import 'package:inconcinnity/tabs/second.dart';
-import 'package:inconcinnity/tabs/third.dart';
-import 'package:inconcinnity/tabs/profile.dart';
+import 'package:inconcinnity/home.dart';
+import 'package:inconcinnity/workouts.dart';
+import 'package:inconcinnity/exercises.dart';
+import 'package:inconcinnity/profile.dart';
 
 // ///////////////////////////////////////////////////////////////////// Main //
 void main() => runApp(Inconcinnity());
@@ -21,15 +21,17 @@ class Inconcinnity extends StatelessWidget {
   }
 }
 
+// ////////////////////////////////////////////////////////////////////////// //
+
+// /////////////////////////////////////////////////// Class |  //
 class MyHome extends StatefulWidget {
   @override
   MyHomeState createState() => MyHomeState();
 }
 
-// SingleTickerProviderStateMixin is used for animation
 class MyHomeState extends State<MyHome> {
   int currentIndex = 0;
-  List<Widget> tabs = [FirstTab(), SecondTab(), ThirdTab(), ProfileTab()];
+  List<Widget> tabs = [HomeTab(), SecondTab(), ThirdTab(), ProfileTab()];
 
   @override
   Widget build(BuildContext context) {

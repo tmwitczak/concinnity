@@ -4,37 +4,31 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'dart:async';
+import 'package:quiver/async.dart';
 
 /////////////////////////////////////////////////////////////// Class: Metronome
-class Metronome extends StatefulWidget {
+class MetronomeWidget extends StatefulWidget {
   //============================================================ Behaviour <
   @override
-  State<StatefulWidget> createState() => _MetronomeState();
+  State<StatefulWidget> createState() => _MetronomeWidgetState();
 }
 
 ////////////////////////////////////////////////////////// Class: MetronomeState
-class _MetronomeState extends State<Metronome> {
+class _MetronomeWidgetState extends State<MetronomeWidget> {
   //================================================================= Data <
   Color color = Colors.white;
 
-  Timer timer;
+  Metronome timer;
 
   //============================================================ Behaviour <
   //------------------------------------------------------ Constructors <<
-  static AudioCache player = new AudioCache();
-
-  _MetronomeState() {
-    player.load(alarmAudioPath);
-    player.
-    timer = new Timer.periodic(Duration(milliseconds: 200), (timer) {
-      setState(() {
-        if (color == Colors.white)
-          color = Colors.black;
-        else
-          color = Colors.white;
-      });
-    });
-  }
+  static List<AudioPlayer> playerAudio = [
+    new AudioPlayer(mode: PlayerMode.LOW_LATENCY)
+  ];
+  static List<AudioCache> player = [
+    new AudioCache(fixedPlayer: playerAudio[0])
+  ];
+  int currentPlayer = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -71,26 +65,57 @@ class _MetronomeState extends State<Metronome> {
 
   var alarmAudioPath = "1.wav";
 
-  void calculateBeatsPerMinute(int bpm) {
-    setState(() {
-      timer.cancel();
-      timer = new Timer.periodic(
-          Duration(milliseconds: (0.5 / (bpm / 60000)).round()), (timer) {
-        setState(() {
-          player.play(alarmAudioPath);
-          if (color == Colors.white)
-            color = Colors.black;
-          else
-            color = Colors.white;
-        });
-      });
-    });
+  Future<void> playAudio() async {
+//    player[currentPlayer].play(alarmAudioPath);
+    await player[0].play(alarmAudioPath);
+//    currentPlayer = (currentPlayer + 1) % 6;
   }
 
-  final Color backgroundColor = Color(0xff171c1a);
+  void calculateBeatsPerMinute(int bpm) {
+//    timer.cancel();
+//    print(bpm);
+//    timer = new Timer.periodic(
+//        Duration(microseconds: (1000.0 * 0.5 / (bpm / 60000.0)).round()),
+//        (timer) {
+//          playAudio();
+//      setState(() {
+//        if (color == Colors.white)
+//          color = Colors.black;
+//        else
+//          color = Colors.white;
+//      });
+//    });
+  }
 
-  final TextStyle textStyle = new TextStyle(
-    color: Color(0xffe3e8e6),
-    fontSize: 40.0,
-  );
-}
+    @override
+    void initState() {
+      super.initState();
+      for (var i in playerAudio) {
+        i.setReleaseMode(ReleaseMode.STOP);
+      }
+//      for (var i in player) {
+////      i.play(alarmAudioPath);
+//      }
+      player[0].load(alarmAudioPath).whenComplete((){
+        timer = new Metronome.epoch(
+            Duration(microseconds: (1000.0 * 1.0 / (100 / 60000.0)).round()));
+        timer.listen((d) {
+          playAudio();
+          setState(() {
+            if (color == Colors.white)
+              color = Colors.black;
+            else
+              color = Colors.white;
+          });
+        });
+      });
+    }
+
+    final Color backgroundColor = Colors.white12;
+
+    final TextStyle textStyle = new TextStyle(
+      color: Color(0xffe3e8e6),
+      fontSize: 40.0,
+    );
+  }
+
