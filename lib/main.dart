@@ -36,9 +36,7 @@ class MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Set the TabBar view as the body of the Scaffold
       body: tabs[currentIndex],
-      // Set the bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int i) {
           setState(() {
